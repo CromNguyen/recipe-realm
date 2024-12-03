@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Recipe {
+  id           String             @id @default(cuid())
+  userId       String
+  title        String
+  description  String?
+  status       String // DRAFT | PUBLISHED
+  cookTime     Int
+  servings     Int
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  ingredients  RecipeIngredient[]
+  imageUrls    RecipeImage[]
+  instructions Instruction[]
+  cuisines     RecipeCuisine[]
+  favorites    Favorite[]
+
+  @@index([userId])
+  @@map("recipes")
+}
+
+model Ingredient {
+  id      String             @id @default(cuid())
+  name    String             @unique
+  recipes RecipeIngredient[]
+
+  @@map("ingredients")
+}
+
+model RecipeIngredient {
+  id           String     @id @default(cuid())
+  recipeId     String
+  ingredientId String
+  amount       Int
+  unit         String
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+  @@index([ingredientId])
+  @@map("recipe_ingredients")
+}
+
+model Instruction {
+  id          String             @id @default(uuid())
+  recipeId    String
+  stepNumber  Int
+  description String
+  imageUrls   InstructionImage[]
+  recipe      Recipe             @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+  @@map("instructions")
+}
+
+model Cuisine {
+  id      String          @id @default(cuid())
+  name    String          @unique
+  recipes RecipeCuisine[]
+
+  @@map("cuisines")
+}
+
+model RecipeCuisine {
+  recipeId  String
+  cuisineId String
+  recipe    Recipe  @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  cuisine   Cuisine @relation(fields: [cuisineId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, cuisineId])
+  @@index([recipeId])
+  @@index([cuisineId])
+  @@map("recipe_cuisines")
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  createdAt DateTime @default(now())
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
+  @@index([userId])
+  @@index([recipeId])
+  @@map("favorites")
+}
+
+model RecipeImage {
+  id       String @id @default(cuid())
+  recipeId String
+  url      String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
+
+model InstructionImage {
+  id            String      @id @default(cuid())
+  instructionId String
+  url           String
+  instruction   Instruction @relation(fields: [instructionId], references: [id], onDelete: Cascade)
+}
