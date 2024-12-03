@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  ChefHatIcon,
-  ConciergeBellIcon,
-  Globe2Icon,
-  HeartIcon,
-} from 'lucide-react'
+import { ConciergeBellIcon, Globe2Icon, HeartIcon } from 'lucide-react'
 
 import {
   Sidebar,
@@ -66,7 +61,7 @@ export function AppSidebar() {
                     isActive={item.url === activeRoute.url}
                     className="hover:bg-secondary hover:text-secondary-foreground"
                   >
-                    <Link href={item.url}>
+                    <Link href={`/${item.url}`}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>

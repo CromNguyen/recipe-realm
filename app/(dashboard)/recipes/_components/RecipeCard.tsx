@@ -29,6 +29,7 @@ import { Button } from '@/components/ui/button'
 import IngredientsList from './IngredientsList'
 import CuisinesList from './CuisinesList'
 import { Skeleton } from '@/components/ui/skeleton'
+import DeleteRecipeDialog from './DeleteRecipeDialog'
 
 const statusColors = {
   [RecipeStatus.DRAFT]: 'bg-yellow-400 text-yellow-600',
@@ -83,7 +84,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
             </div>
           </div>
         </div>
-        <Actions />
+        <Actions recipeId={recipe.id} recipeTitle={recipe.title} />
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <Suspense fallback={<Skeleton className="h-[180px] w-full" />}>
@@ -95,36 +96,50 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
   )
 }
 
-function Actions() {
+function Actions({
+  recipeId,
+  recipeTitle,
+}: {
+  recipeId: string
+  recipeTitle: string
+}) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild className="absolute right-2 top-2">
-        <Button variant="outline" size="sm">
-          <div className="flex items-center justify-self-center w-full h-full">
-            <MoreVerticalIcon size={18} />
-          </div>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="flex items-center gap-2"
-          onSelect={() => setShowDeleteDialog(true)}
-        >
-          <PenIcon size={16} />
-          Edit
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="text-destructive flex items-center gap-2"
-          onSelect={() => setShowDeleteDialog(true)}
-        >
-          <TrashIcon size={16} />
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DeleteRecipeDialog
+        open={showDeleteDialog}
+        setOpen={setShowDeleteDialog}
+        recipeId={recipeId}
+        recipeTitle={recipeTitle}
+      />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild className="absolute right-2 top-2">
+          <Button variant="outline" size="sm">
+            <div className="flex items-center justify-self-center w-full h-full">
+              <MoreVerticalIcon size={18} />
+            </div>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onSelect={() => setShowDeleteDialog(true)}
+          >
+            <PenIcon size={16} />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-destructive flex items-center gap-2"
+            onSelect={() => setShowDeleteDialog(true)}
+          >
+            <TrashIcon size={16} />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   )
 }
