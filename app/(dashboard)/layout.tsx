@@ -1,7 +1,7 @@
 import { AppSidebar } from '@/components/AppSidebar'
 import BreadcrumbHeader from '@/components/BreadcrumbHeader'
 import { ModeToggle } from '@/components/ThemeModeToggle'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { SignedIn, UserButton } from '@clerk/nextjs'
@@ -30,6 +30,7 @@ function layout({ children }: { children: React.ReactNode }) {
           <div className="flex-1 container py-4 text-accent-foreground">
             {children}
           </div>
+          <ScrollBar orientation="vertical" />
         </ScrollArea>
       </main>
     </SidebarProvider>

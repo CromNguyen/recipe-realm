@@ -25,7 +25,7 @@ export const createRecipeSchema = z.object({
     .min(1, 'Add at least one ingredient'),
   instructions: z.array(
     z.object({
-      step: z.number(),
+      stepNumber: z.number().optional(),
       description: z.string().min(1, 'Instruction is required'),
       cookTime: z.number().min(0, 'Cook time cannot be negative'),
     })
@@ -72,7 +72,7 @@ export const createRecipeSchemaMultiStep = [
   z.object({
     instructions: z.array(
       z.object({
-        step: z.number(),
+        stepNumber: z.number().optional(),
         description: z.string().min(1, 'Instruction is required'),
         cookTime: z.number().min(0, 'Cook time cannot be negative'),
       })

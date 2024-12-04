@@ -55,10 +55,11 @@ export default function CuisineInfo() {
                 <FormItem className="space-y-4">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {query.data?.map((item) => {
-                      const isSelected =
-                        field.value?.findIndex(
-                          (value) => value.id === item.id
-                        ) !== -1
+                      const isSelected = field.value
+                        ? field.value?.findIndex(
+                            (value) => value.id === item.id
+                          ) !== -1
+                        : false
 
                       return (
                         <div

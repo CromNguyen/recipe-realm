@@ -51,7 +51,7 @@ export default async function EditRecipePage({
     instructions: recipe.instructions
       .sort((a, b) => a.stepNumber - b.stepNumber)
       .map((instruction) => ({
-        step: instruction.stepNumber,
+        stepNumber: instruction.stepNumber,
         description: instruction.description,
         cookTime: instruction.cookTime,
       })),

@@ -38,9 +38,22 @@ export default function MultiStepForm({
   const currentValidationSchema =
     createRecipeSchemaMultiStep[activeStep] || createRecipeSchema
 
+  const defaultValues = initialData || {
+    title: '',
+    cuisines: [],
+    ingredients: [
+      {
+        name: '',
+        amount: 0,
+        unit: '',
+      },
+    ],
+    instructions: [],
+  }
+
   const form = useForm<createRecipeSchemaType>({
     resolver: zodResolver(currentValidationSchema),
-    defaultValues: initialData,
+    defaultValues,
   })
 
   const currentStep = () => {
