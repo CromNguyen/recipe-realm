@@ -1,9 +1,10 @@
-import React, { Suspense } from 'react'
-import CreateRecipeDialog from './_components/CreateRecipeDialog'
-import { Skeleton } from '@/components/ui/skeleton'
 import { GetRecipesForUser } from '@/actions/recipes/getRecipesForUser'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { AlertCircle, InboxIcon } from 'lucide-react'
+import Link from 'next/link'
+import { Suspense } from 'react'
 import RecipeCard from './_components/RecipeCard'
 
 export default function RecipesPage() {
@@ -14,7 +15,9 @@ export default function RecipesPage() {
           <h1 className="text-3xl font-bold">Recipes</h1>
           <p className="text-muted-foreground">Manage your recipes</p>
         </div>
-        <CreateRecipeDialog />
+        <Link href={'/recipes/create'}>
+          <Button>Create recipe</Button>
+        </Link>
       </div>
       <div className="h-full py-6">
         <Suspense fallback={<UserRecipesSkeleton />}>
@@ -62,7 +65,9 @@ async function UserRecipes() {
             Click the button bellow to create your first recipe
           </p>
         </div>
-        <CreateRecipeDialog triggerText="Create your first recipe" />
+        <Link href={'/recipes/create'}>
+          <Button>Create your first recipe</Button>
+        </Link>
       </div>
     )
   }

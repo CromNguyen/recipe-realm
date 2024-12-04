@@ -8,7 +8,7 @@ export default function CreateRecipePage() {
         <p className="text-muted-foreground">Start creating your recipe</p>
       </div>
       <div className="">
-        <MultiStepForm />
+        <MultiStepForm action="create" />
       </div>
     </div>
   )

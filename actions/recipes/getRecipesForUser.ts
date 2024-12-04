@@ -11,7 +11,7 @@ export async function GetRecipesForUser() {
 
   return prisma.recipe.findMany({
     where: { userId },
-    orderBy: { createdAt: 'asc' },
+    orderBy: { createdAt: 'desc' },
     include: {
       cuisines: {
         include: {

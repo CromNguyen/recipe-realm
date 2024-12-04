@@ -57,6 +57,7 @@ model Instruction {
   recipeId    String
   stepNumber  Int
   description String
+  cookTime    Int                @default(0)
   imageUrls   InstructionImage[]
   recipe      Recipe             @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 

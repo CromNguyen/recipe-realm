@@ -2,9 +2,9 @@ import { z } from 'zod'
 
 export const createRecipeSchema = z.object({
   title: z.string(),
-  description: z.string(),
-  cookTime: z.number(),
-  servings: z.number(),
+  description: z.string().optional(),
+  cookTime: z.number().optional(),
+  servings: z.number().optional(),
   cuisines: z
     .array(
       z.object({
@@ -17,11 +17,19 @@ export const createRecipeSchema = z.object({
     .array(
       z.object({
         id: z.string(),
+        name: z.string(),
         amount: z.number().min(0.1),
         unit: z.string().min(1),
       })
     )
     .min(1, 'Add at least one ingredient'),
+  instructions: z.array(
+    z.object({
+      step: z.number(),
+      description: z.string().min(1, 'Instruction is required'),
+      cookTime: z.number().min(0, 'Cook time cannot be negative'),
+    })
+  ),
 })
 
 export type createRecipeSchemaType = z.infer<typeof createRecipeSchema>
@@ -48,10 +56,20 @@ export const createRecipeSchemaMultiStep = [
       .array(
         z.object({
           id: z.string(),
+          name: z.string(),
           amount: z.number().min(0.1),
           unit: z.string().min(1),
         })
       )
       .min(1, 'Add at least one ingredient'),
+  }),
+  z.object({
+    instructions: z.array(
+      z.object({
+        step: z.number(),
+        description: z.string().min(1, 'Instruction is required'),
+        cookTime: z.number().min(0, 'Cook time cannot be negative'),
+      })
+    ),
   }),
 ]

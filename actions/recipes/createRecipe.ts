@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma'
 import { createRecipeSchema, createRecipeSchemaType } from '@/schema/recipe'
 import { RecipeStatus } from '@/types/recipe'
 import { auth } from '@clerk/nextjs/server'
-import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 
 export async function CreateRecipe(form: createRecipeSchemaType) {
   const { success, data } = createRecipeSchema.safeParse(form)
@@ -19,19 +19,23 @@ export async function CreateRecipe(form: createRecipeSchemaType) {
     throw new Error('unauthenticated')
   }
 
+  const totalCookTime = data.instructions.reduce((acc, curr) => {
+    return acc + curr.cookTime
+  }, 0)
+
   const result = await prisma.recipe.create({
     data: {
       userId,
       title: data.title,
       description: data.description,
-      cookTime: data.cookTime,
-      servings: data.servings,
+      cookTime: totalCookTime,
+      servings: data.servings || 0,
       status: RecipeStatus.DRAFT,
 
       cuisines: {
-        create: {
-          cuisineId: data.cuisineId,
-        },
+        create: data.cuisines.map((cuisine) => ({
+          cuisineId: cuisine.id,
+        })),
       },
 
       ingredients: {
@@ -39,6 +43,14 @@ export async function CreateRecipe(form: createRecipeSchemaType) {
           ingredientId: ingredient.id,
           amount: ingredient.amount,
           unit: ingredient.unit,
+        })),
+      },
+
+      instructions: {
+        create: data.instructions.map((instruction, index) => ({
+          stepNumber: index + 1,
+          description: instruction.description,
+          cookTime: instruction.cookTime,
         })),
       },
     },
@@ -53,6 +65,7 @@ export async function CreateRecipe(form: createRecipeSchemaType) {
           ingredient: true,
         },
       },
+      instructions: true,
     },
   })
 
@@ -60,5 +73,5 @@ export async function CreateRecipe(form: createRecipeSchemaType) {
     throw new Error('failed to create recipe')
   }
 
-  revalidatePath('/recipes')
+  redirect('/recipes')
 }

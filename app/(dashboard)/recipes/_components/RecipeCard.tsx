@@ -1,8 +1,16 @@
 'use client'
 
-import { GetIngredientsByRecipeId } from '@/actions/recipes/getIngredientsByRecipeId'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardHeader } from '@/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import { RecipeStatus } from '@/types/recipe'
 import { Recipe } from '@prisma/client'
@@ -12,35 +20,115 @@ import {
   MoreVerticalIcon,
   PenIcon,
   TrashIcon,
+  RocketIcon,
+  Loader2Icon,
+  FileTextIcon,
+  CheckCircle2Icon,
 } from 'lucide-react'
 import Image from 'next/image'
-import React, { Suspense, useState } from 'react'
-import { INGREDIENT_ICONS } from './common'
-import { GetCuisinesByRecipeId } from '@/actions/recipes/getICuisinesByRecipeId copy'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import IngredientsList from './IngredientsList'
-import CuisinesList from './CuisinesList'
-import { Skeleton } from '@/components/ui/skeleton'
+import { useState } from 'react'
 import DeleteRecipeDialog from './DeleteRecipeDialog'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { PublishRecipe } from '@/actions/recipes/publishRecipe'
+import { useMutation } from '@tanstack/react-query'
 
-const statusColors = {
-  [RecipeStatus.DRAFT]: 'bg-yellow-400 text-yellow-600',
-  [RecipeStatus.PUBLISHED]: 'bg-primary',
+const statusConfig = {
+  [RecipeStatus.DRAFT]: {
+    color: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400',
+    icon: FileTextIcon,
+    label: 'Draft',
+  },
+  [RecipeStatus.PUBLISHED]: {
+    color: 'bg-green-500/10 text-green-700 dark:text-green-400',
+    icon: CheckCircle2Icon,
+    label: 'Published',
+  },
 } as const
 
-export default function RecipeCard({ recipe }: { recipe: Recipe }) {
-  const isDraft = recipe.status === RecipeStatus.DRAFT
+function Actions({
+  recipeId,
+  recipeTitle,
+  status,
+}: {
+  recipeId: string
+  recipeTitle: string
+  status: string
+}) {
+  const router = useRouter()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+  const mutation = useMutation({
+    mutationFn: PublishRecipe,
+    onSuccess: () => {
+      toast.success('Recipe published successfully')
+    },
+    onError: () => {
+      toast.error('Failed to publish recipe')
+    },
+  })
 
   return (
-    <Card className="relative group/card">
+    <>
+      <DeleteRecipeDialog
+        open={showDeleteDialog}
+        setOpen={setShowDeleteDialog}
+        recipeId={recipeId}
+        recipeTitle={recipeTitle}
+      />
+      <div className="absolute right-2 top-2 flex items-center gap-2">
+        {status === RecipeStatus.DRAFT && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-primary hover:bg-primary/5"
+            disabled={mutation.isPending}
+            onClick={() => mutation.mutate(recipeId)}
+          >
+            {mutation.isPending ? (
+              <Loader2Icon size={16} className="mr-2 animate-spin" />
+            ) : (
+              <RocketIcon size={16} className="mr-2" />
+            )}
+            {mutation.isPending ? 'Publishing...' : 'Publish'}
+          </Button>
+        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <MoreVerticalIcon size={18} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="flex items-center gap-2"
+              onSelect={() => router.push(`/recipes/edit/${recipeId}`)}
+            >
+              <PenIcon size={16} />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive flex items-center gap-2"
+              onSelect={() => setShowDeleteDialog(true)}
+            >
+              <TrashIcon size={16} />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
+  )
+}
+
+export default function RecipeCard({ recipe }: { recipe: Recipe }) {
+  const status = recipe.status as RecipeStatus
+  const StatusIcon = statusConfig[status].icon
+
+  return (
+    <Card className={cn('relative group/card transition-all duration-200')}>
       <CardHeader>
         <div className="flex items-start gap-4">
           <div className="rounded-full bg-accent h-20 w-20 overflow-hidden">
@@ -52,30 +140,32 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
             />
           </div>
           <div className="">
-            <p className="font-bold text-md">
-              {recipe.title}
-              <span
+            <div className="flex items-center gap-2">
+              <p className="font-bold text-md">{recipe.title}</p>
+              <Badge
+                variant="secondary"
                 className={cn(
-                  'text-xs ml-2 px-2 py-1 rounded-sm',
-                  statusColors[recipe.status as RecipeStatus]
+                  'flex items-center gap-1',
+                  statusConfig[status].color
                 )}
               >
-                {isDraft ? 'Draft' : 'Published'}
-              </span>
-            </p>
-            <p className="text-xs text-muted-foreground">
+                <StatusIcon size={14} />
+                <span>{statusConfig[status].label}</span>
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
               {recipe.description}
             </p>
             <div className="flex items-center gap-3 mt-2">
               <Badge
-                variant={'outline'}
+                variant="outline"
                 className="space-x-2 text-muted-foreground rounded-sm"
               >
                 <Clock2Icon className="h-4 w-4" />
                 <span className="text-sm">{recipe.cookTime}m</span>
               </Badge>
               <Badge
-                variant={'outline'}
+                variant="outline"
                 className="space-x-2 text-muted-foreground rounded-sm"
               >
                 <ConciergeBellIcon className="h-4 w-4" />
@@ -84,62 +174,12 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
             </div>
           </div>
         </div>
-        <Actions recipeId={recipe.id} recipeTitle={recipe.title} />
+        <Actions
+          recipeId={recipe.id}
+          recipeTitle={recipe.title}
+          status={recipe.status}
+        />
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        <Suspense fallback={<Skeleton className="h-[180px] w-full" />}>
-          <IngredientsList recipeId={recipe.id} />
-          <CuisinesList recipeId={recipe.id} />
-        </Suspense>
-      </CardContent>
     </Card>
-  )
-}
-
-function Actions({
-  recipeId,
-  recipeTitle,
-}: {
-  recipeId: string
-  recipeTitle: string
-}) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-
-  return (
-    <>
-      <DeleteRecipeDialog
-        open={showDeleteDialog}
-        setOpen={setShowDeleteDialog}
-        recipeId={recipeId}
-        recipeTitle={recipeTitle}
-      />
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild className="absolute right-2 top-2">
-          <Button variant="outline" size="sm">
-            <div className="flex items-center justify-self-center w-full h-full">
-              <MoreVerticalIcon size={18} />
-            </div>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="flex items-center gap-2"
-            onSelect={() => setShowDeleteDialog(true)}
-          >
-            <PenIcon size={16} />
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="text-destructive flex items-center gap-2"
-            onSelect={() => setShowDeleteDialog(true)}
-          >
-            <TrashIcon size={16} />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
   )
 }

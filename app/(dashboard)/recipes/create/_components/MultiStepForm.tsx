@@ -1,55 +1,71 @@
 'use client'
 
+import { CreateRecipe } from '@/actions/recipes/createRecipe'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
-import { Separator } from '@/components/ui/separator'
 import {
   createRecipeSchema,
   createRecipeSchemaMultiStep,
   createRecipeSchemaType,
 } from '@/schema/recipe'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import BasicInfo from './BasicInfo'
-import StepperIndicator from './StepperIndicator'
 import CuisineInfo from './CuisineInfo'
 import IngredientInfo from './IngredientInfo'
+import InstructionInfo from './InstructionInfo'
+import StepperIndicator from './StepperIndicator'
+import SummaryInfo from './SummaryInfo'
 
-export default function MultiStepForm() {
+const steps = ['Basic', 'Cuisines', 'Ingredients', 'Instructions', 'Review']
+
+export default function MultiStepForm({
+  initialData,
+  action,
+}: {
+  initialData?: createRecipeSchemaType
+  action: 'create' | 'edit'
+}) {
   const [activeStep, setActiveStep] = useState(0)
-  const currentValidationSchema = createRecipeSchemaMultiStep[activeStep]
+
+  const currentValidationSchema =
+    createRecipeSchemaMultiStep[activeStep] || createRecipeSchema
 
   const form = useForm<createRecipeSchemaType>({
     resolver: zodResolver(currentValidationSchema),
-    defaultValues: {
-      ingredients: [{ id: '', amount: undefined, unit: '' }],
-      cuisines: [],
-    },
+    defaultValues: initialData,
   })
 
-  const steps = [
-    {
-      name: 'Basic',
-      component: <BasicInfo />,
+  const currentStep = () => {
+    switch (activeStep) {
+      case 0:
+        return <BasicInfo />
+      case 1:
+        return <CuisineInfo />
+      case 2:
+        return <IngredientInfo />
+      case 3:
+        return <InstructionInfo />
+      case 4:
+        return <SummaryInfo />
+      default:
+        return null
+    }
+  }
+
+  const mutation = useMutation({
+    mutationFn: CreateRecipe,
+    onSuccess: () => {
+      toast.success('Recipe created successfully', { id: 'create-recipe' })
+      form.reset()
     },
-    {
-      name: 'Cuisines',
-      component: <CuisineInfo />,
+    onError: () => {
+      toast.error('Something went wrong', { id: 'create-recipe' })
     },
-    {
-      name: 'Ingredients',
-      component: <IngredientInfo />,
-    },
-    {
-      name: 'Instructions',
-      component: <div>Instructions</div>,
-    },
-    {
-      name: 'Summary',
-      component: <div>Summary</div>,
-    },
-  ]
+  })
 
   const handleNext = async () => {
     const isStepValid = await form.trigger(undefined, { shouldFocus: true })
@@ -62,22 +78,20 @@ export default function MultiStepForm() {
     setActiveStep((prev) => prev - 1)
   }
 
-  const onSubmit = useCallback((values: createRecipeSchemaType) => {
-    console.log('🚀 ~ MultiStepForm ~ values:', values)
-    // toast.loading('Creating recipe...', { id: 'create-recipe' })
-  }, [])
+  const onSubmit = useCallback(
+    (values: createRecipeSchemaType) => {
+      toast.loading('Creating recipe...', { id: 'create-recipe' })
+      mutation.mutate(values)
+    },
+    [mutation]
+  )
 
   return (
     <div>
-      <StepperIndicator
-        activeStep={activeStep}
-        steps={steps.map((step) => step.name)}
-      />
+      <StepperIndicator activeStep={activeStep} steps={steps} />
       <Form {...form}>
         <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="p-4 mt-10 flex flex-col gap-6">
-            {steps[activeStep].component}
-          </div>
+          <div className="p-4 mt-10 flex flex-col gap-6">{currentStep()}</div>
           <div className="flex items-center gap-4 justify-center py-4">
             <Button
               type="button"
