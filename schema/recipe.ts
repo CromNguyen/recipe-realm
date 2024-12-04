@@ -32,7 +32,13 @@ export const createRecipeSchema = z.object({
   ),
 })
 
+export const updateRecipeSchema = createRecipeSchema.extend({
+  id: z.string().optional(),
+  status: z.string().optional(),
+})
+
 export type createRecipeSchemaType = z.infer<typeof createRecipeSchema>
+export type updateRecipeSchemaType = z.infer<typeof updateRecipeSchema>
 
 export const createRecipeSchemaMultiStep = [
   z.object({

@@ -25,12 +25,12 @@ const routes = [
     icon: Globe2Icon,
   },
   {
-    title: 'Recipes',
+    title: 'My Recipes',
     url: 'recipes',
     icon: ConciergeBellIcon,
   },
   {
-    title: 'Favorites',
+    title: 'My Favorites',
     url: 'favorites',
     icon: HeartIcon,
   },

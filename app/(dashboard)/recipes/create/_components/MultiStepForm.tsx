@@ -7,6 +7,7 @@ import {
   createRecipeSchema,
   createRecipeSchemaMultiStep,
   createRecipeSchemaType,
+  updateRecipeSchemaType,
 } from '@/schema/recipe'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
@@ -19,15 +20,18 @@ import IngredientInfo from './IngredientInfo'
 import InstructionInfo from './InstructionInfo'
 import StepperIndicator from './StepperIndicator'
 import SummaryInfo from './SummaryInfo'
+import { UpdateRecipe } from '@/actions/recipes/updateRecipe'
 
 const steps = ['Basic', 'Cuisines', 'Ingredients', 'Instructions', 'Review']
 
 export default function MultiStepForm({
   initialData,
   action,
+  recipeId,
 }: {
-  initialData?: createRecipeSchemaType
+  initialData?: updateRecipeSchemaType
   action: 'create' | 'edit'
+  recipeId?: string
 }) {
   const [activeStep, setActiveStep] = useState(0)
 
@@ -67,6 +71,17 @@ export default function MultiStepForm({
     },
   })
 
+  const editMutation = useMutation({
+    mutationFn: UpdateRecipe,
+    onSuccess: () => {
+      toast.success('Recipe updated successfully', { id: 'edit-recipe' })
+      form.reset()
+    },
+    onError: () => {
+      toast.error('Something went wrong', { id: 'edit-recipe' })
+    },
+  })
+
   const handleNext = async () => {
     const isStepValid = await form.trigger(undefined, { shouldFocus: true })
     if (isStepValid) {
@@ -80,10 +95,20 @@ export default function MultiStepForm({
 
   const onSubmit = useCallback(
     (values: createRecipeSchemaType) => {
-      toast.loading('Creating recipe...', { id: 'create-recipe' })
-      mutation.mutate(values)
+      if (action === 'create') {
+        toast.loading('Creating recipe...', { id: 'create-recipe' })
+        mutation.mutate(values)
+      }
+      if (action === 'edit') {
+        toast.loading('Updating recipe...', { id: 'edit-recipe' })
+        editMutation.mutate({
+          id: recipeId,
+          status: initialData?.status,
+          ...values,
+        })
+      }
     },
-    [mutation]
+    [action, mutation, editMutation, recipeId, initialData?.status]
   )
 
   return (

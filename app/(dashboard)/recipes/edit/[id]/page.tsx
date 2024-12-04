@@ -1,8 +1,9 @@
 import prisma from '@/lib/prisma'
+import { updateRecipeSchemaType } from '@/schema/recipe'
+import { RecipeStatus } from '@/types/recipe'
 import { auth } from '@clerk/nextjs/server'
 import { notFound } from 'next/navigation'
 import MultiStepForm from '../../create/_components/MultiStepForm'
-import { createRecipeSchemaType } from '@/schema/recipe'
 
 export default async function EditRecipePage({
   params,
@@ -28,18 +29,19 @@ export default async function EditRecipePage({
       instructions: true,
     },
   })
-  console.log('🚀 ~ recipe:', recipe)
 
   if (!recipe) return notFound()
 
   // Transform the data to match the form structure
-  const initialData: createRecipeSchemaType = {
+  const initialData: updateRecipeSchemaType = {
     title: recipe.title,
     description: recipe.description || undefined,
+    servings: recipe.servings || undefined,
     cuisines: recipe.cuisines.map((rc) => ({
       id: rc.cuisine.id,
       name: rc.cuisine.name,
     })),
+    status: recipe.status || RecipeStatus.DRAFT,
     ingredients: recipe.ingredients.map((ri) => ({
       id: ri.ingredient.id,
       name: ri.ingredient.name,
@@ -62,7 +64,11 @@ export default async function EditRecipePage({
         <p className="text-muted-foreground">{recipe.title}</p>
       </div>
       <div className="">
-        <MultiStepForm action="edit" initialData={initialData} />
+        <MultiStepForm
+          action="edit"
+          initialData={initialData}
+          recipeId={params.id}
+        />
       </div>
     </div>
   )
