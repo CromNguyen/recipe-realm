@@ -39,7 +39,7 @@ export const GetPublishedRecipes = cache(async (filters: FilterOptions) => {
     }),
   }
 
-  return prisma.recipe.findMany({
+  return await prisma.recipe.findMany({
     where: {
       ...(filters.searchQuery && {
         title: { contains: filters.searchQuery, mode: 'insensitive' },
@@ -62,7 +62,19 @@ export const GetPublishedRecipes = cache(async (filters: FilterOptions) => {
         },
       },
       imageUrls: true,
-      favorites: true,
+      favorites: {
+        where: {
+          userId,
+        },
+        select: {
+          id: true,
+        },
+      },
+      _count: {
+        select: {
+          favorites: true,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',

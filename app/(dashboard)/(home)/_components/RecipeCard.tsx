@@ -13,21 +13,27 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { ClockIcon, HeartIcon, UsersIcon } from 'lucide-react'
 import Image from 'next/image'
 import RecipeDialogContent from './RecipeDialogContent'
 import { FormatCookTime } from '@/lib/format'
+import ToggleLikeButton from './ToggleLikeButton'
+import { GetFavoritesForUser } from '@/actions/favorite/getFavoritesForUser'
 
 type RecipeData = Awaited<ReturnType<typeof GetPublishedRecipes>>[number]
+type FavoriteRecipeData = Awaited<
+  ReturnType<typeof GetFavoritesForUser>
+>[number]['recipe']
 
-function RecipeCard({ recipe }: { recipe: RecipeData }) {
+function RecipeCard({ recipe }: { recipe: RecipeData | FavoriteRecipeData }) {
   const recipeImage = (recipe.imageUrls as string[])?.[0]
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full cursor-pointer">
+        <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full cursor-pointer">
           <CardHeader className="p-0">
             <div className="relative aspect-video overflow-hidden">
               {recipeImage ? (
@@ -60,14 +66,18 @@ function RecipeCard({ recipe }: { recipe: RecipeData }) {
                 cookTime={recipe.cookTime}
                 servings={recipe.servings}
               />
-              <LikeButton count={recipe.favorites?.length || 0} />
+              <LikeCount count={recipe._count.favorites || 0} />
             </CardFooter>
           </div>
+          <ToggleLikeButton
+            recipeId={recipe.id}
+            isLiked={recipe.favorites.length > 0}
+          />
         </Card>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="font-bold text-xl">
-          {recipe.title}
+          <DialogTitle>{recipe.title}</DialogTitle>
         </DialogHeader>
         <RecipeDialogContent recipeId={recipe.id} recipeImage={recipeImage} />
       </DialogContent>
@@ -94,7 +104,7 @@ const RecipeMetrics = ({
   </div>
 )
 
-const LikeButton = ({ count }: { count: number }) => (
+const LikeCount = ({ count }: { count: number }) => (
   <button className="flex items-center gap-1.5 text-muted-foreground hover:text-red-500 transition-colors">
     <HeartIcon className="w-4 h-4" />
     <span className="text-sm font-medium">{count}</span>

@@ -1,10 +1,10 @@
 import { GetPublishedRecipes } from '@/actions/recipes/getPublishedRecipes'
-import { Suspense, memo } from 'react'
-import FilterButton from './_components/FilterButton'
-import SearchInputField from './_components/SearchInputField'
-import { SearchX } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { SearchX } from 'lucide-react'
+import { Suspense } from 'react'
+import FilterButton from './_components/FilterButton'
 import RecipeCard from './_components/RecipeCard'
+import SearchInputField from './_components/SearchInputField'
 
 export default function HomePage({
   searchParams,
@@ -32,25 +32,21 @@ export default function HomePage({
   )
 }
 
-const Header = memo(() => (
+const Header = () => (
   <div>
     <h1 className="text-3xl font-bold">Discovery</h1>
     <p className="text-muted-foreground">Explore and find new recipes to try</p>
   </div>
-))
+)
 
-Header.displayName = 'Header'
-
-const SearchSection = memo(() => (
+const SearchSection = () => (
   <div className="flex gap-4">
     <div className="flex-1">
       <SearchInputField />
     </div>
     <FilterButton />
   </div>
-))
-
-SearchSection.displayName = 'SearchSection'
+)
 
 const RecipesGrid = async ({
   searchQuery,
