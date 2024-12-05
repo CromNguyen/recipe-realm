@@ -133,7 +133,7 @@ export default function RecipeCard({ recipe }: { recipe: any }) {
         'group overflow-hidden hover:shadow-lg transition-all duration-300 flex cursor-pointer relative'
       )}
     >
-      <CardHeader className="w-[400px]">
+      <CardHeader className="w-[400px] shrink-0">
         <div className="relative aspect-video overflow-hidden">
           {recipe.imageUrls?.[0] ? (
             <Image
