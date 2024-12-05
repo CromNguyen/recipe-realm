@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Recipe {
@@ -21,7 +22,7 @@ model Recipe {
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
   ingredients  RecipeIngredient[]
-  imageUrls    RecipeImage[]
+  imageUrls    Json
   instructions Instruction[]
   cuisines     RecipeCuisine[]
   favorites    Favorite[]
@@ -53,13 +54,13 @@ model RecipeIngredient {
 }
 
 model Instruction {
-  id          String             @id @default(uuid())
+  id          String @id @default(uuid())
   recipeId    String
   stepNumber  Int
   description String
-  cookTime    Int                @default(0)
-  imageUrls   InstructionImage[]
-  recipe      Recipe             @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  cookTime    Int    @default(0)
+  imageUrls   Json
+  recipe      Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   @@index([recipeId])
   @@map("instructions")
@@ -96,18 +97,4 @@ model Favorite {
   @@index([userId])
   @@index([recipeId])
   @@map("favorites")
-}
-
-model RecipeImage {
-  id       String @id @default(cuid())
-  recipeId String
-  url      String
-  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-}
-
-model InstructionImage {
-  id            String      @id @default(cuid())
-  instructionId String
-  url           String
-  instruction   Instruction @relation(fields: [instructionId], references: [id], onDelete: Cascade)
 }

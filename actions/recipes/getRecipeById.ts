@@ -13,7 +13,6 @@ export const GetRecipeById = cache(async (id: string) => {
   const recipe = await prisma.recipe.findUnique({
     where: { id },
     include: {
-      imageUrls: true,
       ingredients: {
         include: {
           ingredient: true,

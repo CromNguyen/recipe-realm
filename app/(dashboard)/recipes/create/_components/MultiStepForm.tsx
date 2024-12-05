@@ -128,7 +128,7 @@ export default function MultiStepForm({
     <div>
       <StepperIndicator activeStep={activeStep} steps={steps} />
       <Form {...form}>
-        <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className="w-full">
           <div className="p-4 mt-10 flex flex-col gap-6">{currentStep()}</div>
           <div className="flex items-center gap-4 justify-center py-4">
             <Button
@@ -141,7 +141,11 @@ export default function MultiStepForm({
               Back
             </Button>
             {activeStep === steps.length - 1 ? (
-              <Button type="submit" className="min-w-[100px]">
+              <Button
+                type="button"
+                onClick={form.handleSubmit(onSubmit)}
+                className="min-w-[100px]"
+              >
                 Submit
               </Button>
             ) : (

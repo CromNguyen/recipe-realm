@@ -137,7 +137,7 @@ export default function RecipeCard({ recipe }: { recipe: any }) {
         <div className="relative aspect-video overflow-hidden">
           {recipe.imageUrls?.[0] ? (
             <Image
-              src={recipe.imageUrls[0].url}
+              src={recipe.imageUrls[0]}
               alt={recipe.title}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"

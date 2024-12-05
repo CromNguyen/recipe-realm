@@ -12,8 +12,5 @@ export async function GetRecipesForUser() {
   return prisma.recipe.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
-    include: {
-      imageUrls: true,
-    },
   })
 }

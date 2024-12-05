@@ -23,15 +23,16 @@ import { FormatCookTime } from '@/lib/format'
 type RecipeData = Awaited<ReturnType<typeof GetPublishedRecipes>>[number]
 
 function RecipeCard({ recipe }: { recipe: RecipeData }) {
+  const recipeImage = (recipe.imageUrls as string[])?.[0]
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full cursor-pointer">
           <CardHeader className="p-0">
             <div className="relative aspect-video overflow-hidden">
-              {recipe.imageUrls?.[0] ? (
+              {recipeImage ? (
                 <Image
-                  src={recipe.imageUrls[0].url}
+                  src={recipeImage}
                   alt={recipe.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"

@@ -41,6 +41,7 @@ export default async function EditRecipePage({
       id: rc.cuisine.id,
       name: rc.cuisine.name,
     })),
+    imageUrl: recipe.imageUrls ? (recipe.imageUrls as string[])[0] : '',
     status: recipe.status || RecipeStatus.DRAFT,
     ingredients: recipe.ingredients.map((ri) => ({
       id: ri.ingredient.id,

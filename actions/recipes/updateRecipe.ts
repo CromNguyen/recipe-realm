@@ -59,6 +59,7 @@ export async function UpdateRecipe(form: updateRecipeSchemaType) {
             stepNumber: index + 1,
             description: instruction.description,
             cookTime: instruction.cookTime,
+            imageUrls: [],
           })),
         },
       },

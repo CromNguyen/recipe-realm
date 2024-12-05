@@ -51,14 +51,11 @@ export async function CreateRecipe(form: createRecipeSchemaType) {
           stepNumber: index + 1,
           description: instruction.description,
           cookTime: instruction.cookTime,
+          imageUrls: [],
         })),
       },
 
-      imageUrls: {
-        create: {
-          url: data.imageUrl,
-        },
-      },
+      imageUrls: [data.imageUrl],
     },
     include: {
       cuisines: {
@@ -72,7 +69,6 @@ export async function CreateRecipe(form: createRecipeSchemaType) {
         },
       },
       instructions: true,
-      imageUrls: true,
     },
   })
 

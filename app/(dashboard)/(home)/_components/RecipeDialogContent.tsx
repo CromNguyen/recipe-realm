@@ -3,7 +3,6 @@
 import { GetRecipeById } from '@/actions/recipes/getRecipeById'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
 import { FormatCookTime } from '@/lib/format'
 import { useQuery } from '@tanstack/react-query'
 import { ClockIcon, Loader2Icon, UsersIcon } from 'lucide-react'
@@ -23,13 +22,15 @@ export default function RecipeDialogContent({ recipeId }: Props) {
 
   if (isLoading) return <Loader2Icon className="w-6 h-6 animate-spin" />
 
+  const recipeImage = (recipe.imageUrls as string[])?.[0]
+
   return (
     <>
       {/* Image */}
-      {recipe.imageUrls?.[0] && (
+      {recipeImage && (
         <div className="relative aspect-video">
           <Image
-            src={recipe.imageUrls[0].url}
+            src={recipeImage}
             alt={recipe.title}
             fill
             className="object-cover"
@@ -109,7 +110,6 @@ export default function RecipeDialogContent({ recipeId }: Props) {
           <div className="absolute top-3 left-[7px] bottom-0 w-[2px] m-0 bg-gradient-to-b from-primary to-transparent" />
         </div>
       </div>
-      <ScrollBar orientation="vertical" />
     </>
   )
 }
