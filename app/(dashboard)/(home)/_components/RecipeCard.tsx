@@ -69,7 +69,7 @@ function RecipeCard({ recipe }: { recipe: RecipeData }) {
         <DialogHeader className="font-bold text-xl">
           {recipe.title}
         </DialogHeader>
-        <RecipeDialogContent recipeId={recipe.id} />
+        <RecipeDialogContent recipeId={recipe.id} recipeImage={recipeImage} />
       </DialogContent>
     </Dialog>
   )

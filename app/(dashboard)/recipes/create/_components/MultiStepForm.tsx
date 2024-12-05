@@ -48,7 +48,12 @@ export default function MultiStepForm({
         unit: '',
       },
     ],
-    instructions: [],
+    instructions: [
+      {
+        description: '',
+        cookTime: 0,
+      },
+    ],
   }
 
   const form = useForm<createRecipeSchemaType>({

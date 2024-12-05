@@ -19,7 +19,6 @@ export const GetPublishedRecipes = cache(async (filters: FilterOptions) => {
 
   const where = {
     status: RecipeStatus.PUBLISHED,
-    ...(filters.searchQuery && { title: { contains: filters.searchQuery } }),
     ...(filters.cuisines?.length && {
       cuisines: {
         some: {
@@ -41,7 +40,12 @@ export const GetPublishedRecipes = cache(async (filters: FilterOptions) => {
   }
 
   return prisma.recipe.findMany({
-    where,
+    where: {
+      ...(filters.searchQuery && {
+        title: { contains: filters.searchQuery, mode: 'insensitive' },
+      }),
+      ...where,
+    },
     select: {
       id: true,
       title: true,
