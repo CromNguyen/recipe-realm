@@ -53,7 +53,7 @@ export default function InstructionInfo() {
                   setValue('instructions', [
                     ...currentInstructions,
                     {
-                      step: currentInstructions.length + 1,
+                      stepNumber: currentInstructions.length + 1,
                       description: '',
                       cookTime: 0,
                     },

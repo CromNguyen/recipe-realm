@@ -9,7 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { ClockIcon, HeartIcon, UsersIcon } from 'lucide-react'
 import Image from 'next/image'
 import RecipeDialogContent from './RecipeDialogContent'
@@ -21,10 +26,7 @@ function RecipeCard({ recipe }: { recipe: RecipeData }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Card
-          // onClick={() => setIsDialogOpen(true)}
-          className="group overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full cursor-pointer"
-        >
+        <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full cursor-pointer">
           <CardHeader className="p-0">
             <div className="relative aspect-video overflow-hidden">
               {recipe.imageUrls?.[0] ? (
@@ -63,6 +65,9 @@ function RecipeCard({ recipe }: { recipe: RecipeData }) {
         </Card>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="font-bold text-xl">
+          {recipe.title}
+        </DialogHeader>
         <RecipeDialogContent recipeId={recipe.id} />
       </DialogContent>
     </Dialog>

@@ -11,9 +11,10 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { createRecipeSchemaType } from '@/schema/recipe'
-import { CakeIcon, UsersIcon } from 'lucide-react'
+import { CakeIcon, ImageIcon, UsersIcon } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import { Card, CardContent } from '@/components/ui/card'
+import ImageUpload from '@/components/ImageUpload'
 
 export default function BasicInfo() {
   const { control } = useFormContext<createRecipeSchemaType>()
@@ -32,6 +33,28 @@ export default function BasicInfo() {
 
       <Card>
         <CardContent className="pt-6 space-y-6">
+          <FormField
+            control={control}
+            name="imageUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-2 text-lg">
+                  <ImageIcon className="w-5 h-5 text-primary" />
+                  Recipe Image
+                  <span className="text-xs text-primary font-normal">
+                    (required)
+                  </span>
+                </FormLabel>
+                <FormDescription>
+                  Add a beautiful photo of your finished dish
+                </FormDescription>
+                <FormControl>
+                  <ImageUpload value={field.value} onChange={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={control}
             name="title"

@@ -53,6 +53,12 @@ export async function CreateRecipe(form: createRecipeSchemaType) {
           cookTime: instruction.cookTime,
         })),
       },
+
+      imageUrls: {
+        create: {
+          url: data.imageUrl,
+        },
+      },
     },
     include: {
       cuisines: {
@@ -66,6 +72,7 @@ export async function CreateRecipe(form: createRecipeSchemaType) {
         },
       },
       instructions: true,
+      imageUrls: true,
     },
   })
 

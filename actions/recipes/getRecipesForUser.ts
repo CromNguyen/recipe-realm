@@ -13,16 +13,7 @@ export async function GetRecipesForUser() {
     where: { userId },
     orderBy: { createdAt: 'desc' },
     include: {
-      cuisines: {
-        include: {
-          cuisine: true,
-        },
-      },
-      ingredients: {
-        include: {
-          ingredient: true,
-        },
-      },
+      imageUrls: true,
     },
   })
 }

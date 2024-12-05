@@ -5,6 +5,7 @@ export const createRecipeSchema = z.object({
   description: z.string().optional(),
   cookTime: z.number().optional(),
   servings: z.number().optional(),
+  imageUrl: z.string(),
   cuisines: z
     .array(
       z.object({

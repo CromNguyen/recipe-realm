@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -123,63 +123,72 @@ function Actions({
   )
 }
 
-export default function RecipeCard({ recipe }: { recipe: Recipe }) {
+export default function RecipeCard({ recipe }: { recipe: any }) {
   const status = recipe.status as RecipeStatus
   const StatusIcon = statusConfig[status].icon
 
   return (
-    <Card className={cn('relative group/card transition-all duration-200')}>
-      <CardHeader>
-        <div className="flex items-start gap-4">
-          <div className="rounded-full bg-accent h-20 w-20 overflow-hidden">
+    <Card
+      className={cn(
+        'group overflow-hidden hover:shadow-lg transition-all duration-300 flex cursor-pointer relative'
+      )}
+    >
+      <CardHeader className="w-[400px]">
+        <div className="relative aspect-video overflow-hidden">
+          {recipe.imageUrls?.[0] ? (
             <Image
+              src={recipe.imageUrls[0].url}
               alt={recipe.title}
-              src="https://via.placeholder.com/100"
-              width={100}
-              height={100}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
             />
-          </div>
-          <div className="">
-            <div className="flex items-center gap-2">
-              <p className="font-bold text-md">{recipe.title}</p>
-              <Badge
-                variant="secondary"
-                className={cn(
-                  'flex items-center gap-1',
-                  statusConfig[status].color
-                )}
-              >
-                <StatusIcon size={14} />
-                <span>{statusConfig[status].label}</span>
-              </Badge>
+          ) : (
+            <div className="w-full h-full bg-muted flex items-center justify-center">
+              <span className="text-muted-foreground">No image</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {recipe.description}
-            </p>
-            <div className="flex items-center gap-3 mt-2">
-              <Badge
-                variant="outline"
-                className="space-x-2 text-muted-foreground rounded-sm"
-              >
-                <Clock2Icon className="h-4 w-4" />
-                <span className="text-sm">{recipe.cookTime}m</span>
-              </Badge>
-              <Badge
-                variant="outline"
-                className="space-x-2 text-muted-foreground rounded-sm"
-              >
-                <ConciergeBellIcon className="h-4 w-4" />
-                <span className="text-sm">{recipe.servings}</span>
-              </Badge>
-            </div>
-          </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
-        <Actions
-          recipeId={recipe.id}
-          recipeTitle={recipe.title}
-          status={recipe.status}
-        />
       </CardHeader>
+      <CardContent className="p-6">
+        <div className="flex items-center gap-2">
+          <p className="font-bold text-md">{recipe.title}</p>
+          <Badge
+            variant="secondary"
+            className={cn(
+              'flex items-center gap-1',
+              statusConfig[status].color
+            )}
+          >
+            <StatusIcon size={14} />
+            <span>{statusConfig[status].label}</span>
+          </Badge>
+        </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          {recipe.description}
+        </p>
+        <div className="flex items-center gap-3 mt-3">
+          <Badge
+            variant="outline"
+            className="space-x-2 text-muted-foreground rounded-sm"
+          >
+            <Clock2Icon className="h-4 w-4" />
+            <span className="text-sm">{recipe.cookTime}m</span>
+          </Badge>
+          <Badge
+            variant="outline"
+            className="space-x-2 text-muted-foreground rounded-sm"
+          >
+            <ConciergeBellIcon className="h-4 w-4" />
+            <span className="text-sm">{recipe.servings}</span>
+          </Badge>
+        </div>
+      </CardContent>
+      <Actions
+        recipeId={recipe.id}
+        recipeTitle={recipe.title}
+        status={recipe.status}
+      />
     </Card>
   )
 }
