@@ -32,9 +32,10 @@ model Recipe {
 }
 
 model Ingredient {
-  id      String             @id @default(cuid())
-  name    String             @unique
-  recipes RecipeIngredient[]
+  id       String             @id @default(cuid())
+  name     String             @unique
+  imageUrl String?
+  recipes  RecipeIngredient[]
 
   @@map("ingredients")
 }

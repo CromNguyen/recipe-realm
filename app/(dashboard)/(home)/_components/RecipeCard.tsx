@@ -12,6 +12,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -77,7 +78,10 @@ function RecipeCard({ recipe }: { recipe: RecipeData | FavoriteRecipeData }) {
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="font-bold text-xl">
-          <DialogTitle>{recipe.title}</DialogTitle>
+          <DialogTitle className="text-xl">{recipe.title}</DialogTitle>
+          <DialogDescription className="text-sm font-medium">
+            {recipe.description}
+          </DialogDescription>
         </DialogHeader>
         <RecipeDialogContent recipeId={recipe.id} recipeImage={recipeImage} />
       </DialogContent>

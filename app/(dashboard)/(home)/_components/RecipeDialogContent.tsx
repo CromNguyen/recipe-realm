@@ -34,28 +34,22 @@ export default function RecipeDialogContent({ recipeId, recipeImage }: Props) {
       )}
       {isLoading && <RecipeDialogContentSkeleton />}
       {!isLoading && recipe && (
-        <div className="space-y-8 py-4">
-          {/* Header */}
-          <div className="space-y-6">
-            <p className="text-sm text-muted-foreground">
-              {recipe.description}
-            </p>
-            <div className="flex gap-4">
-              <Badge
-                variant={'secondary'}
-                className="text-muted-foreground gap-1 py-1.5"
-              >
-                <ClockIcon size={16} />
-                {FormatCookTime(recipe.cookTime)}
-              </Badge>
-              <Badge
-                variant={'secondary'}
-                className="text-muted-foreground gap-1 py-1.5"
-              >
-                <UsersIcon size={16} />
-                {recipe.servings}
-              </Badge>
-            </div>
+        <div className="space-y-8">
+          <div className="flex gap-4">
+            <Badge
+              variant={'secondary'}
+              className="text-muted-foreground gap-1 py-1.5"
+            >
+              <ClockIcon size={16} />
+              {FormatCookTime(recipe.cookTime)}
+            </Badge>
+            <Badge
+              variant={'secondary'}
+              className="text-muted-foreground gap-1 py-1.5"
+            >
+              <UsersIcon size={16} />
+              {recipe.servings}
+            </Badge>
           </div>
           {/* Ingredients */}
           <ScrollArea className="whitespace-nowrap rounded-md border">
@@ -65,7 +59,17 @@ export default function RecipeDialogContent({ recipeId, recipeImage }: Props) {
                   key={ingredient.id}
                   className="flex flex-col gap-1 items-center"
                 >
-                  <div className="h-10 w-10 bg-accent mb-1"></div>
+                  <div className="h-10 w-10 rounded-md overflow-hidden bg-accent mb-1">
+                    {ingredient.ingredient.imageUrl && (
+                      <Image
+                        src={ingredient.ingredient.imageUrl}
+                        alt={ingredient.ingredient.name}
+                        width={40}
+                        height={40}
+                        className="object-cover"
+                      />
+                    )}
+                  </div>
                   <div className="text-sm font-semibold">
                     {ingredient.ingredient.name}
                   </div>
@@ -116,14 +120,11 @@ export default function RecipeDialogContent({ recipeId, recipeImage }: Props) {
 
 function RecipeDialogContentSkeleton() {
   return (
-    <div className="space-y-8 py-4 animate-pulse">
+    <div className="space-y-8 animate-pulse">
       {/* Description skeleton */}
-      <div className="space-y-6">
-        <div className="h-4 bg-muted rounded w-3/4"></div>
-        <div className="flex gap-4">
-          <div className="h-8 w-24 bg-muted rounded"></div>
-          <div className="h-8 w-24 bg-muted rounded"></div>
-        </div>
+      <div className="flex gap-4">
+        <div className="h-8 w-24 bg-muted rounded"></div>
+        <div className="h-8 w-24 bg-muted rounded"></div>
       </div>
 
       {/* Ingredients skeleton */}

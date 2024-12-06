@@ -1,10 +1,9 @@
 'use client'
 
 import { ToggleFavorite } from '@/actions/favorite/toggleFavorite'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useMutation } from '@tanstack/react-query'
-import { Heart, HeartIcon } from 'lucide-react'
+import { HeartIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function ToggleLikeButton({
@@ -43,13 +42,14 @@ export default function ToggleLikeButton({
   return (
     <button
       disabled={mutation.isPending}
-      className="bg-white/80 shadow-lg rounded-full p-2 absolute top-2 right-2 opacity-0 hover:bg-white group-hover:opacity-100 transition-opacity duration-300"
+      className="bg-white rounded-full p-2 absolute top-2 right-2 group/button"
       onClick={handleClick}
     >
       <HeartIcon
         className={cn(
-          'stroke-rose-600 w-6 h-6',
-          isLiked && 'fill-rose-600 ',
+          'stroke-rose-600 w-5 h-5 group-hover/button:fill-rose-600 transition-colors duration-300',
+          isLiked &&
+            'fill-rose-600 group-hover/button:stroke-rose-600 group-hover/button:fill-white',
           mutation.isPending && 'animate-pulse'
         )}
       />
